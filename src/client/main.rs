@@ -2,11 +2,11 @@ use client::Client;
 use configs::ClientConfig;
 use core::panic;
 use env_logger;
-
 mod client;
 mod configs;
 mod data_collection;
 mod network;
+pub mod http_client;
 
 #[tokio::main]
 pub async fn main() {

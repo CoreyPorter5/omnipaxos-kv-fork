@@ -1,0 +1,54 @@
+4	:invoke	:echo	"Please echo 92"
+4	:ok	:echo	{:type "echo_ok", :echo "Please echo 92", :msg_id 2, :in_reply_to 1}
+1	:invoke	:echo	"Please echo 62"
+1	:ok	:echo	{:type "echo_ok", :echo "Please echo 62", :msg_id 2, :in_reply_to 1}
+3	:invoke	:echo	"Please echo 27"
+3	:ok	:echo	{:type "echo_ok", :echo "Please echo 27", :msg_id 2, :in_reply_to 1}
+1	:invoke	:echo	"Please echo 3"
+1	:ok	:echo	{:type "echo_ok", :echo "Please echo 3", :msg_id 3, :in_reply_to 2}
+4	:invoke	:echo	"Please echo 38"
+4	:ok	:echo	{:type "echo_ok", :echo "Please echo 38", :msg_id 3, :in_reply_to 2}
+0	:invoke	:echo	"Please echo 30"
+0	:ok	:echo	{:type "echo_ok", :echo "Please echo 30", :msg_id 2, :in_reply_to 1}
+2	:invoke	:echo	"Please echo 88"
+2	:ok	:echo	{:type "echo_ok", :echo "Please echo 88", :msg_id 2, :in_reply_to 1}
+2	:invoke	:echo	"Please echo 89"
+2	:ok	:echo	{:type "echo_ok", :echo "Please echo 89", :msg_id 3, :in_reply_to 2}
+4	:invoke	:echo	"Please echo 23"
+4	:ok	:echo	{:type "echo_ok", :echo "Please echo 23", :msg_id 4, :in_reply_to 3}
+1	:invoke	:echo	"Please echo 19"
+1	:ok	:echo	{:type "echo_ok", :echo "Please echo 19", :msg_id 4, :in_reply_to 3}
+3	:invoke	:echo	"Please echo 33"
+3	:ok	:echo	{:type "echo_ok", :echo "Please echo 33", :msg_id 3, :in_reply_to 2}
+2	:invoke	:echo	"Please echo 122"
+2	:ok	:echo	{:type "echo_ok", :echo "Please echo 122", :msg_id 4, :in_reply_to 3}
+2	:invoke	:echo	"Please echo 84"
+2	:ok	:echo	{:type "echo_ok", :echo "Please echo 84", :msg_id 5, :in_reply_to 4}
+0	:invoke	:echo	"Please echo 101"
+0	:ok	:echo	{:type "echo_ok", :echo "Please echo 101", :msg_id 3, :in_reply_to 2}
+1	:invoke	:echo	"Please echo 6"
+1	:ok	:echo	{:type "echo_ok", :echo "Please echo 6", :msg_id 5, :in_reply_to 4}
+1	:invoke	:echo	"Please echo 47"
+1	:ok	:echo	{:type "echo_ok", :echo "Please echo 47", :msg_id 6, :in_reply_to 5}
+3	:invoke	:echo	"Please echo 4"
+3	:ok	:echo	{:type "echo_ok", :echo "Please echo 4", :msg_id 4, :in_reply_to 3}
+4	:invoke	:echo	"Please echo 43"
+4	:ok	:echo	{:type "echo_ok", :echo "Please echo 43", :msg_id 5, :in_reply_to 4}
+3	:invoke	:echo	"Please echo 97"
+3	:ok	:echo	{:type "echo_ok", :echo "Please echo 97", :msg_id 5, :in_reply_to 4}
+3	:invoke	:echo	"Please echo 60"
+3	:ok	:echo	{:type "echo_ok", :echo "Please echo 60", :msg_id 6, :in_reply_to 5}
+0	:invoke	:echo	"Please echo 57"
+0	:ok	:echo	{:type "echo_ok", :echo "Please echo 57", :msg_id 4, :in_reply_to 3}
+0	:invoke	:echo	"Please echo 3"
+0	:ok	:echo	{:type "echo_ok", :echo "Please echo 3", :msg_id 5, :in_reply_to 4}
+3	:invoke	:echo	"Please echo 87"
+3	:ok	:echo	{:type "echo_ok", :echo "Please echo 87", :msg_id 7, :in_reply_to 6}
+1	:invoke	:echo	"Please echo 63"
+1	:ok	:echo	{:type "echo_ok", :echo "Please echo 63", :msg_id 7, :in_reply_to 6}
+1	:invoke	:echo	"Please echo 56"
+1	:ok	:echo	{:type "echo_ok", :echo "Please echo 56", :msg_id 8, :in_reply_to 7}
+1	:invoke	:echo	"Please echo 87"
+1	:ok	:echo	{:type "echo_ok", :echo "Please echo 87", :msg_id 9, :in_reply_to 8}
+3	:invoke	:echo	"Please echo 86"
+3	:ok	:echo	{:type "echo_ok", :echo "Please echo 86", :msg_id 8, :in_reply_to 7}

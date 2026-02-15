@@ -1,0 +1,11 @@
+Online
+Received {:id=>0, :src=>"c0", :dest=>"n1", :body=>{:type=>"init", :node_id=>"n1", :node_ids=>["n1", "n2", "n3", "n4", "n5"], :msg_id=>1}}
+Initialized node n1
+Received {:id=>20, :src=>"c13", :dest=>"n1", :body=>{:echo=>"Please echo 30", :type=>"echo", :msg_id=>1}}
+Echoing {:echo=>"Please echo 30", :type=>"echo", :msg_id=>1}
+Received {:id=>36, :src=>"c13", :dest=>"n1", :body=>{:echo=>"Please echo 101", :type=>"echo", :msg_id=>2}}
+Echoing {:echo=>"Please echo 101", :type=>"echo", :msg_id=>2}
+Received {:id=>50, :src=>"c13", :dest=>"n1", :body=>{:echo=>"Please echo 57", :type=>"echo", :msg_id=>3}}
+Echoing {:echo=>"Please echo 57", :type=>"echo", :msg_id=>3}
+Received {:id=>52, :src=>"c13", :dest=>"n1", :body=>{:echo=>"Please echo 3", :type=>"echo", :msg_id=>4}}
+Echoing {:echo=>"Please echo 3", :type=>"echo", :msg_id=>4}

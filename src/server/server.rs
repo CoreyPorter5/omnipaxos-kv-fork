@@ -131,7 +131,7 @@ impl OmniPaxosServer {
             self.update_database_and_respond(decided_commands);
         }
     }
-
+    
     fn update_database_and_respond(&mut self, commands: Vec<Command>) {
         // TODO: batching responses possible here (batch at handle_cluster_messages)
         for command in commands {

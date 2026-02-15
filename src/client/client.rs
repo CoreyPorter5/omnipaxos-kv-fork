@@ -1,10 +1,13 @@
-use crate::{configs::ClientConfig, data_collection::ClientData, network::Network};
+use crate::{
+    configs::ClientConfig, data_collection::ClientData, http_client::HttpEndpoint, network::Network,
+};
 use chrono::Utc;
 use log::*;
 use omnipaxos_kv::common::{kv::*, messages::*};
 use rand::Rng;
 use std::time::Duration;
 use tokio::time::interval;
+use tokio::sync::mpsc;
 
 const NETWORK_BATCH_SIZE: usize = 100;
 
@@ -105,6 +108,34 @@ impl Client {
         self.save_results().expect("Failed to save results");
     }
 
+
+
+    pub async fn run_2(&mut self) {
+        let (tx, mut rx) = mpsc::channel::<u32>(100);
+        let my_port = 8000 + (self.id as u16);
+        let endpoint = HttpEndpoint::new("/trigger", tx, my_port).await;
+
+        tokio::spawn(async move {
+            endpoint.serve().await;
+        });
+
+        // 3. The loop now listens for the network OR the HTTP server
+        loop {
+            tokio::select! {
+                // This triggers whenever someone hits: http://localhost:3000/trigger/42
+                Some(value) = rx.recv() => {
+                    info!("Client received {} from HTTP. Sending request to server...", value);
+                    // Use the value to send a request
+                    self.send_custom_request(value).await;
+                }
+
+                // Your existing network logic...
+                Some(msg) = self.network.server_messages.recv() => {
+                    self.handle_server_message(msg);
+                }
+            }
+        }
+    }
     fn handle_server_message(&mut self, msg: ServerMessage) {
         debug!("Recieved {msg:?}");
         match msg {
@@ -115,7 +146,16 @@ impl Client {
             }
         }
     }
-
+    async fn send_custom_request(&mut self, value: u32) {
+        let key = value.to_string();
+        let cmd = KVCommand::Get(key);
+        
+        let request = ClientMessage::Append(self.next_request_id, cmd);
+        debug!("Sending {request:?}");
+        self.network.send(self.active_server, request).await;
+        self.client_data.new_request(false);
+        self.next_request_id += 1;
+    }
     async fn send_request(&mut self, is_write: bool) {
         let key = self.next_request_id.to_string();
         let cmd = match is_write {
