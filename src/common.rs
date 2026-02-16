@@ -39,6 +39,13 @@ pub mod messages {
                 ServerMessage::StartSignal(_) => unimplemented!(),
             }
         }
+        pub fn get_read_value(&self) -> Option<&String> {
+        if let ServerMessage::Read(_, value) = self {
+            value.as_ref()
+        } else {
+            None
+        }
+    }
     }
 }
 

@@ -16,5 +16,6 @@ pub async fn main() {
         Err(e) => panic!("{e}"),
     };
     let mut client = Client::new(client_config).await;
-    client.run().await;
+    // client.run().await;
+    client.run_2().await;
 }

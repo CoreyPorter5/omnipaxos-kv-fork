@@ -7,7 +7,9 @@ pub struct Database {
 
 impl Database {
     pub fn new() -> Self {
-        Self { db: HashMap::new() }
+        let mut db = HashMap::new();
+        db.insert("1".to_string(), "2".to_string());
+        Self { db }
     }
 
     pub fn handle_command(&mut self, command: KVCommand) -> Option<Option<String>> {

@@ -1,13 +1,15 @@
 use crate::{
-    configs::ClientConfig, data_collection::ClientData, http_client::HttpEndpoint, network::Network,
+    configs::ClientConfig, data_collection::ClientData, http_client::HttpEndpoint,
+    http_client::HttpTrigger, network::Network,
 };
 use chrono::Utc;
 use log::*;
 use omnipaxos_kv::common::{kv::*, messages::*};
 use rand::Rng;
+use std::collections::HashMap;
 use std::time::Duration;
+use tokio::sync::{mpsc, oneshot};
 use tokio::time::interval;
-use tokio::sync::mpsc;
 
 const NETWORK_BATCH_SIZE: usize = 100;
 
@@ -19,6 +21,7 @@ pub struct Client {
     active_server: NodeId,
     final_request_count: Option<usize>,
     next_request_id: usize,
+    pending_http_queries: HashMap<usize, oneshot::Sender<String>>,
 }
 
 impl Client {
@@ -36,6 +39,7 @@ impl Client {
             config,
             final_request_count: None,
             next_request_id: 0,
+            pending_http_queries: HashMap::new(),
         }
     }
 
@@ -108,10 +112,17 @@ impl Client {
         self.save_results().expect("Failed to save results");
     }
 
-
-
     pub async fn run_2(&mut self) {
-        let (tx, mut rx) = mpsc::channel::<u32>(100);
+        info!("{}: Waiting for start signal from server", self.id);
+        match self.network.server_messages.recv().await {
+            Some(ServerMessage::StartSignal(start_time)) => {
+                Self::wait_until_sync_time(&mut self.config, start_time).await;
+            }
+            _ => panic!("Error waiting for start signal"),
+        }
+
+        // 1. Change channel type to HttpTrigger to allow two-way communication
+        let (tx, mut rx) = mpsc::channel::<HttpTrigger>(100);
         let my_port = 8000 + (self.id as u16);
         let endpoint = HttpEndpoint::new("/trigger", tx, my_port).await;
 
@@ -119,19 +130,30 @@ impl Client {
             endpoint.serve().await;
         });
 
-        // 3. The loop now listens for the network OR the HTTP server
+        info!(
+            "{}: HTTP server spawned on port {}. Entering event loop.",
+            self.id, my_port
+        );
+
         loop {
             tokio::select! {
-                // This triggers whenever someone hits: http://localhost:3000/trigger/42
-                Some(value) = rx.recv() => {
-                    info!("Client received {} from HTTP. Sending request to server...", value);
-                    // Use the value to send a request
-                    self.send_custom_request(value).await;
+                //  Receive the trigger which contains the value AND the response channel
+                Some(trigger) = rx.recv() => {
+                    info!("Client received {} from HTTP. Sending request to server...", trigger.value);
+
+                    let req_id = self.next_request_id;
+
+                    // Store the "callback" channel
+                    self.pending_http_queries.insert(req_id, trigger.response_tx);
+
+                    // Send the request to the server cluster
+                    self.send_custom_request(trigger.value).await;
                 }
 
-                // Your existing network logic...
+                // Existing network logic
                 Some(msg) = self.network.server_messages.recv() => {
-                    self.handle_server_message(msg);
+                    // self.handle_server_message(msg);
+                    self.handle_server_message_with_http(msg);
                 }
             }
         }
@@ -146,10 +168,32 @@ impl Client {
             }
         }
     }
+    // In src/client/client.rs
+    fn handle_server_message_with_http(&mut self, msg: ServerMessage) {
+        let cmd_id = msg.command_id();
+
+        // Check if this ID belongs to a waiting HTTP request
+        if let Some(response_tx) = self.pending_http_queries.remove(&cmd_id) {
+            println!("{:?}", msg);
+            let response_data = format!("Server replied: {:?}", msg);
+            match msg {
+                ServerMessage::Read(id, Some(value)) => {
+                    info!("Read Success (ID: {}): Found value '{}'", id, value);
+                    let _ = response_tx.send(value);
+                }
+                _ => {
+                    error!("Unexpected message type received: {:?}", msg);
+                }
+            }
+        }
+
+        // Continue with existing data collection logic
+        self.client_data.new_response(cmd_id);
+    }
     async fn send_custom_request(&mut self, value: u32) {
         let key = value.to_string();
         let cmd = KVCommand::Get(key);
-        
+
         let request = ClientMessage::Append(self.next_request_id, cmd);
         debug!("Sending {request:?}");
         self.network.send(self.active_server, request).await;
