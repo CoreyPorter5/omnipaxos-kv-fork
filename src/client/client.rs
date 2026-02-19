@@ -1,8 +1,6 @@
 use crate::{
-    configs::ClientConfig,
-    data_collection::ClientData,
-    network::Network,
-    http_client::{router, HttpTrigger, KvResp},
+    configs::ClientConfig, data_collection::ClientData, http_client::HttpEndpoint,
+    http_client::HttpTrigger, network::Network,
 };
 use chrono::Utc;
 use log::*;
@@ -114,125 +112,52 @@ impl Client {
         self.save_results().expect("Failed to save results");
     }
 
-    // pub async fn run_2(&mut self) {
-    //     info!("{}: Waiting for start signal from server", self.id);
-    //     match self.network.server_messages.recv().await {
-    //         Some(ServerMessage::StartSignal(start_time)) => {
-    //             Self::wait_until_sync_time(&mut self.config, start_time).await;
-    //         }
-    //         _ => panic!("Error waiting for start signal"),
-    //     }
-
-    //     // 1. Change channel type to HttpTrigger to allow two-way communication
-    //     let (tx, mut rx) = mpsc::channel::<HttpTrigger>(100);
-    //     let my_port = 8000 + (self.id as u16);
-    //     let endpoint = HttpEndpoint::new("/trigger", tx, my_port).await;
-
-    //     tokio::spawn(async move {
-    //         endpoint.serve().await;
-    //     });
-
-    //     info!(
-    //         "{}: HTTP server spawned on port {}. Entering event loop.",
-    //         self.id, my_port
-    //     );
-
-    //     loop {
-    //         tokio::select! {
-    //             //  Receive the trigger which contains the value AND the response channel
-    //             Some(trigger) = rx.recv() => {
-    //                 info!("Client received {} from HTTP. Sending request to server...", trigger.value);
-
-    //                 let req_id = self.next_request_id;
-
-    //                 // Store the "callback" channel
-    //                 self.pending_http_queries.insert(req_id, trigger.response_tx);
-
-    //                 // Send the request to the server cluster
-    //                 self.send_custom_request(trigger.value).await;
-    //             }
-
-    //             // Existing network logic
-    //             Some(msg) = self.network.server_messages.recv() => {
-    //                 // self.handle_server_message(msg);
-    //                 self.handle_server_message_with_http(msg);
-    //             }
-    //         }
-    //     }
-    // }
-
-
     pub async fn run_2(&mut self) {
-        // Channel for HTTP -> client loop
-        let (tx, mut rx) = mpsc::channel::<HttpTrigger>(100);
+        info!("{}: Waiting for start signal from server", self.id);
+        match self.network.server_messages.recv().await {
+            Some(ServerMessage::StartSignal(start_time)) => {
+                Self::wait_until_sync_time(&mut self.config, start_time).await;
+            }
+            _ => panic!("Error waiting for start signal"),
+        }
 
-        // Spawn HTTP server for THIS client
+        // 1. Change channel type to HttpTrigger to allow two-way communication
+        let (tx, mut rx) = mpsc::channel::<HttpTrigger>(100);
         let my_port = 8000 + (self.id as u16);
-        let app = router(tx);
-        let addr = format!("0.0.0.0:{}", my_port);
+        let endpoint = HttpEndpoint::new("/trigger", tx, my_port).await;
+
         tokio::spawn(async move {
-            let listener = tokio::net::TcpListener::bind(&addr).await.unwrap();
-            axum::serve(listener, app.into_make_service()).await.unwrap();
+            endpoint.serve().await;
         });
 
-
-        info!("{}: HTTP server spawned on port {}. Entering event loop.", self.id, my_port);
-
-        // Map: command_id -> oneshot sender waiting to answer the HTTP request
-        let mut pending: HashMap<CommandId, oneshot::Sender<KvResp>> = HashMap::new();
+        info!(
+            "{}: HTTP server spawned on port {}. Entering event loop.",
+            self.id, my_port
+        );
 
         loop {
             tokio::select! {
-                // 1) HTTP request arrives -> turn into ClientMessage::Append
+                //  Receive the trigger which contains the value AND the response channel
                 Some(trigger) = rx.recv() => {
-                    let cmd_id: CommandId = self.next_request_id as CommandId;
-                    self.next_request_id += 1;
+                    info!("Client received {} from HTTP. Sending request to server...", trigger.value);
 
-                    // Store how to reply to this HTTP call
-                    pending.insert(cmd_id, trigger.response_tx);
+                    let req_id = self.next_request_id;
 
-                    // Send to server using your existing client networking
-                    let request = ClientMessage::Append(cmd_id, trigger.cmd);
-                    debug!("HTTP -> sending {request:?}");
-                    self.network.send(self.active_server, request).await;
+                    // Store the "callback" channel
+                    self.pending_http_queries.insert(req_id, trigger.response_tx);
+
+                    // Send the request to the server cluster
+                    self.send_custom_request(trigger.value).await;
                 }
 
-                // 2) Server reply arrives -> complete the matching HTTP call
+                // Existing network logic
                 Some(msg) = self.network.server_messages.recv() => {
-                    debug!("Received {msg:?}");
-
-                    match msg {
-                        ServerMessage::Write(id) => {
-                            if let Some(tx) = pending.remove(&id) {
-                                let _ = tx.send(KvResp {
-                                    ok: true,
-                                    value: None,
-                                    swapped: None,
-                                    error: None,
-                                });
-                            }
-                        }
-
-                        ServerMessage::Read(id, value_opt) => {
-                            if let Some(tx) = pending.remove(&id) {
-                                let _ = tx.send(KvResp {
-                                    ok: true,
-                                    value: value_opt,
-                                    swapped: None,
-                                    error: None,
-                                });
-                            }
-                        }
-
-                        // If you add CAS, you'll likely want a response type for it.
-                        // If you encode CAS as Write + extra info, adjust here.
-                        ServerMessage::StartSignal(_) => {}
-                    }
+                    // self.handle_server_message(msg);
+                    self.handle_server_message_with_http(msg);
                 }
             }
         }
     }
-
     fn handle_server_message(&mut self, msg: ServerMessage) {
         debug!("Recieved {msg:?}");
         match msg {

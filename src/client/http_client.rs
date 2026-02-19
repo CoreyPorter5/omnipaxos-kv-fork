@@ -1,109 +1,67 @@
 use axum::{
     extract::{Path, State},
-    http::StatusCode,
-    routing::{get, post, put},
-    Json, Router,
+    routing::get,
+    Router,
 };
-use serde::{Deserialize, Serialize};
-use tokio::sync::{mpsc, oneshot};
+use tokio::sync::{mpsc, oneshot}; // Import oneshot
 
-use omnipaxos_kv::common::kv::KVCommand;
-
+// Define a message structure to carry the value and the return channel
 pub struct HttpTrigger {
-    pub cmd: KVCommand,
-    pub response_tx: oneshot::Sender<KvResp>,
+    pub value: u32,
+    pub response_tx: oneshot::Sender<String>,
 }
 
 #[derive(Clone)]
-pub struct AppState {
-    pub tx: mpsc::Sender<HttpTrigger>,
+struct AppState {
+    tx: mpsc::Sender<HttpTrigger>, // Changed to send HttpTrigger
 }
 
-#[derive(Serialize, Debug)]
-pub struct KvResp {
-    pub ok: bool,
-    pub value: Option<String>,
-    pub swapped: Option<bool>,
-    pub error: Option<String>,
-}
+async fn handler(Path(value): Path<u32>, State(state): State<AppState>) -> String {
+    println!("HTTP received value: {}", value);
 
-#[derive(Deserialize)]
-pub struct PutBody {
-    pub value: String,
-}
-
-#[derive(Deserialize)]
-pub struct CasBody {
-    pub from: String,
-    pub to: String,
-}
-
-async fn dispatch(state: AppState, cmd: KVCommand) -> (StatusCode, Json<KvResp>) {
+    // Create a one-shot channel for the response
     let (response_tx, response_rx) = oneshot::channel();
 
-    if state
-        .tx
-        .send(HttpTrigger { cmd, response_tx })
-        .await
-        .is_err()
-    {
-        return (
-            StatusCode::SERVICE_UNAVAILABLE,
-            Json(KvResp {
-                ok: false,
-                value: None,
-                swapped: None,
-                error: Some("Client loop not running".into()),
-            }),
-        );
+    let trigger = HttpTrigger {
+        value,
+        response_tx,
+    };
+
+    // Send to client loop
+    if state.tx.send(trigger).await.is_err() {
+        return "Internal Error: Client loop disconnected".to_string();
     }
 
+    // Wait for the response from the client loop
     match response_rx.await {
-        Ok(resp) => (StatusCode::OK, Json(resp)),
-        Err(_) => (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(KvResp {
-                ok: false,
-                value: None,
-                swapped: None,
-                error: Some("Client loop dropped response".into()),
-            }),
-        ),
+        Ok(msg) => msg,
+        Err(_) => "Error: Main loop failed to respond".to_string(),
     }
 }
 
-// --- Separate endpoints, but minimal code in each ---
-
-async fn get_endpoint(
-    State(state): State<AppState>,
-    Path(key): Path<String>,
-) -> (StatusCode, Json<KvResp>) {
-    dispatch(state, KVCommand::Get(key)).await
+pub struct HttpEndpoint {
+    pub base_path: String,
+    pub app: Router,
+    listener: tokio::net::TcpListener,
 }
 
-async fn put_endpoint(
-    State(state): State<AppState>,
-    Path(key): Path<String>,
-    Json(body): Json<PutBody>,
-) -> (StatusCode, Json<KvResp>) {
-    dispatch(state, KVCommand::Put(key, body.value)).await
-}
+impl HttpEndpoint {
+    pub async fn new(path: &str, tx: mpsc::Sender<HttpTrigger>, port: u16) -> Self {
+        let state = AppState { tx };
+        let app = Router::new()
+            .route(&format!("{}/:value", path), get(handler))
+            .with_state(state);
+        let addr = format!("0.0.0.0:{}", port);
+        let listener = tokio::net::TcpListener::bind(&addr).await.expect("Port already in use");
+        
+        HttpEndpoint {
+            base_path: path.to_string(),
+            app,
+            listener,
+        }
+    }
 
-async fn cas_endpoint(
-    State(state): State<AppState>,
-    Path(key): Path<String>,
-    Json(body): Json<CasBody>,
-) -> (StatusCode, Json<KvResp>) {
-    // Requires KVCommand::Cas(...) to exist in your codebase.
-    dispatch(state, KVCommand::Cas(key, body.from, body.to)).await
-}
-
-pub fn router(tx: mpsc::Sender<HttpTrigger>) -> Router {
-    let state = AppState { tx };
-
-    Router::new()
-        .route("/get/:key", get(get_endpoint))
-        .route("/put/:key", put(put_endpoint))
-        .route("/cas/:key", post(cas_endpoint))
-        .with_state(state)
+    pub async fn serve(self) {
+        axum::serve(self.listener, self.app).await.unwrap();
+    }
 }
