@@ -23,6 +23,32 @@ impl Database {
                 None
             }
             KVCommand::Get(key) => Some(self.db.get(&key).map(|v| v.clone())),
+            KVCommand::Cas {
+                key,
+                from,
+                to,
+                create_if_not_exists,
+            } => {
+                let swapped = match self.db.get(&key) {
+                    Some(current_value) => {
+                        if *current_value == from {
+                            self.db.insert(key, to);
+                            true
+                        } else {
+                            false
+                        }
+                    }
+                    None => {
+                        if create_if_not_exists && from.is_empty() {
+                            self.db.insert(key, to);
+                            true
+                        } else {
+                            false
+                        }
+                    }
+                };
+                Some(Some(swapped.to_string()))
+            }
         }
     }
 }

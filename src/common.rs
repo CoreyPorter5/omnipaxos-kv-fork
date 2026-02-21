@@ -1,3 +1,5 @@
+
+
 pub mod messages {
     use omnipaxos::{messages::Message as OmniPaxosMessage, util::NodeId};
     use serde::{Deserialize, Serialize};
@@ -72,6 +74,12 @@ pub mod kv {
         Put(String, String),
         Delete(String),
         Get(String),
+        Cas {
+            key: String,
+            from: String,
+            to: String,
+            create_if_not_exists: bool,
+        },
     }
 
     #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -96,6 +104,25 @@ pub mod kv {
                         }
                     }
                     KVCommand::Get(_) => (),
+                    KVCommand::Cas {
+                        key,
+                        from,
+                        to,
+                        create_if_not_exists,
+                    } => {
+                        match snapshotted.get(key){
+                            Some(current_value) => {
+                                if current_value == from {
+                                    snapshotted.insert(key.clone(), to.clone());
+                                }
+                            }
+                            None => {
+                                if *create_if_not_exists && from.is_empty() {
+                                    snapshotted.insert(key.clone(), to.clone());
+                                }
+                            }
+                        }
+                    }
                 }
             }
             // remove keys that were put back

@@ -36,6 +36,8 @@ pub struct PutBody {
 pub struct CasBody {
     pub from: String,
     pub to: String,
+    #[serde(default)]
+    pub create_if_not_exists: bool,
 }
 
 async fn dispatch(state: AppState, cmd: KVCommand) -> (StatusCode, Json<KvResp>) {
@@ -94,8 +96,16 @@ async fn cas_endpoint(
     Path(key): Path<String>,
     Json(body): Json<CasBody>,
 ) -> (StatusCode, Json<KvResp>) {
-    // Requires KVCommand::Cas(...) to exist in your codebase.
-    dispatch(state, KVCommand::Cas(key, body.from, body.to)).await
+    dispatch(
+        state,
+        KVCommand::Cas {
+            key,
+            from: body.from,
+            to: body.to,
+            create_if_not_exists: body.create_if_not_exists,
+        },
+    )
+        .await
 }
 
 pub fn router(tx: mpsc::Sender<HttpTrigger>) -> Router {

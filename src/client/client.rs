@@ -215,6 +215,14 @@ impl Client {
 
                         ServerMessage::Read(id, value_opt) => {
                             if let Some(tx) = pending.remove(&id) {
+                                let swapped_opt = value_opt.as_deref().and_then(|s| match s {
+                                    "true" => Some(true),
+                                    "false" => Some(false),
+                                    _ => None,
+                                });
+
+
+
                                 let _ = tx.send(KvResp {
                                     ok: true,
                                     value: value_opt,
