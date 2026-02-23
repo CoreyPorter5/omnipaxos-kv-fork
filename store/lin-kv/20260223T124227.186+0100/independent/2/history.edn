@@ -1,0 +1,162 @@
+{:index 275, :time 14224415633, :type :invoke, :process 0, :f :read, :value nil}
+{:index 276, :time 14239793509, :type :ok, :process 0, :f :read, :value "3"}
+{:index 277, :time 14290300808, :type :invoke, :process 0, :f :read, :value nil}
+{:index 278, :time 14310559824, :type :ok, :process 0, :f :read, :value "3"}
+{:index 279, :time 14346479710, :type :invoke, :process 69, :f :cas, :value [1 1]}
+{:index 281, :time 14491722855, :type :invoke, :process 1, :f :read, :value nil}
+{:index 282, :time 14506468637, :type :ok, :process 1, :f :read, :value "3"}
+{:index 283, :time 14642096214, :type :invoke, :process 2, :f :read, :value nil}
+{:index 284, :time 14650056307, :type :fail, :process 2, :f :read, :value nil, :error [:abort "Timeout"]}
+{:index 285, :time 14731191618, :type :invoke, :process 64, :f :cas, :value [2 0]}
+{:index 286, :time 14861799657, :type :invoke, :process 65, :f :write, :value 4}
+{:index 287, :time 14868463292, :type :fail, :process 65, :f :write, :value 4, :error [:abort "Timeout"]}
+{:index 288, :time 15037494086, :type :invoke, :process 0, :f :read, :value nil}
+{:index 289, :time 15050311416, :type :invoke, :process 65, :f :cas, :value [2 1]}
+{:index 290, :time 15056963583, :type :ok, :process 0, :f :read, :value "3"}
+{:index 291, :time 15086728583, :type :invoke, :process 0, :f :read, :value nil}
+{:index 292, :time 15103099350, :type :ok, :process 0, :f :read, :value "3"}
+{:index 293, :time 15208095927, :type :invoke, :process 1, :f :read, :value nil}
+{:index 294, :time 15227029089, :type :ok, :process 1, :f :read, :value "3"}
+{:index 295, :time 15348990702, :type :info, :process 69, :f :cas, :value [1 1], :error :net-timeout}
+{:index 296, :time 15357907895, :type :invoke, :process 75, :f :cas, :value [4 3]}
+{:index 297, :time 15429785656, :type :invoke, :process 0, :f :read, :value nil}
+{:index 298, :time 15448250318, :type :ok, :process 0, :f :read, :value "3"}
+{:index 299, :time 15497333453, :type :invoke, :process 0, :f :read, :value nil}
+{:index 300, :time 15518373855, :type :ok, :process 0, :f :read, :value "3"}
+{:index 301, :time 15545236346, :type :invoke, :process 0, :f :read, :value nil}
+{:index 302, :time 15560752534, :type :ok, :process 0, :f :read, :value "3"}
+{:index 303, :time 15627551182, :type :invoke, :process 0, :f :read, :value nil}
+{:index 304, :time 15644453467, :type :ok, :process 0, :f :read, :value "3"}
+{:index 305, :time 15721573729, :type :invoke, :process 0, :f :read, :value nil}
+{:index 306, :time 15733305552, :type :info, :process 64, :f :cas, :value [2 0], :error :net-timeout}
+{:index 307, :time 15740224673, :type :ok, :process 0, :f :read, :value "3"}
+{:index 308, :time 15769524689, :type :invoke, :process 70, :f :write, :value 2}
+{:index 309, :time 15786063210, :type :ok, :process 70, :f :write, :value 2}
+{:index 310, :time 15793133686, :type :invoke, :process 2, :f :read, :value nil}
+{:index 311, :time 15797420386, :type :fail, :process 2, :f :read, :value nil, :error [:abort "Timeout"]}
+{:index 312, :time 15871949372, :type :invoke, :process 70, :f :cas, :value [4 0]}
+{:index 313, :time 16028737719, :type :invoke, :process 0, :f :read, :value nil}
+{:index 314, :time 16035953035, :type :invoke, :process 1, :f :read, :value nil}
+{:index 315, :time 16048086420, :type :ok, :process 0, :f :read, :value "2"}
+{:index 316, :time 16053240903, :type :ok, :process 1, :f :read, :value "2"}
+{:index 317, :time 16055107873, :type :info, :process 65, :f :cas, :value [2 1], :error :net-timeout}
+{:index 318, :time 16071732859, :type :invoke, :process 71, :f :cas, :value [4 3]}
+{:index 319, :time 16094079232, :type :invoke, :process 0, :f :read, :value nil}
+{:index 320, :time 16108192051, :type :ok, :process 0, :f :read, :value "2"}
+{:index 321, :time 16183667167, :type :invoke, :process 1, :f :read, :value nil}
+{:index 322, :time 16202996663, :type :ok, :process 1, :f :read, :value "2"}
+{:index 323, :time 16250146822, :type :invoke, :process 2, :f :read, :value nil}
+{:index 324, :time 16255161466, :type :fail, :process 2, :f :read, :value nil, :error [:abort "Timeout"]}
+{:index 325, :time 16299173682, :type :invoke, :process 0, :f :read, :value nil}
+{:index 326, :time 16315577615, :type :ok, :process 0, :f :read, :value "2"}
+{:index 327, :time 16348153879, :type :invoke, :process 0, :f :read, :value nil}
+{:index 328, :time 16361708317, :type :info, :process 75, :f :cas, :value [4 3], :error :net-timeout}
+{:index 329, :time 16366877529, :type :ok, :process 0, :f :read, :value "2"}
+{:index 330, :time 16397406266, :type :invoke, :process 0, :f :read, :value nil}
+{:index 331, :time 16413308165, :type :ok, :process 0, :f :read, :value "2"}
+{:index 332, :time 16548546381, :type :invoke, :process 81, :f :write, :value 2}
+{:index 333, :time 16565051776, :type :ok, :process 81, :f :write, :value 2}
+{:index 334, :time 16573592393, :type :invoke, :process 0, :f :read, :value nil}
+{:index 335, :time 16595445870, :type :ok, :process 0, :f :read, :value "2"}
+{:index 336, :time 16645190346, :type :invoke, :process 81, :f :write, :value 2}
+{:index 337, :time 16660072745, :type :ok, :process 81, :f :write, :value 2}
+{:index 338, :time 16731783982, :type :invoke, :process 2, :f :read, :value nil}
+{:index 339, :time 16736463931, :type :fail, :process 2, :f :read, :value nil, :error [:abort "Timeout"]}
+{:index 340, :time 16757147503, :type :invoke, :process 81, :f :write, :value 4}
+{:index 341, :time 16767724516, :type :ok, :process 81, :f :write, :value 4}
+{:index 342, :time 16776949586, :type :invoke, :process 0, :f :read, :value nil}
+{:index 343, :time 16795293987, :type :ok, :process 0, :f :read, :value "4"}
+{:index 344, :time 16873758247, :type :info, :process 70, :f :cas, :value [4 0], :error :net-timeout}
+{:index 345, :time 16910865666, :type :invoke, :process 81, :f :cas, :value [2 2]}
+{:index 346, :time 16921324305, :type :invoke, :process 0, :f :read, :value nil}
+{:index 347, :time 16925118913, :type :invoke, :process 1, :f :read, :value nil}
+{:index 348, :time 16931767748, :type :ok, :process 0, :f :read, :value "4"}
+{:index 349, :time 16942630907, :type :ok, :process 1, :f :read, :value "4"}
+{:index 350, :time 16945804031, :type :invoke, :process 76, :f :cas, :value [1 2]}
+{:index 351, :time 17073192336, :type :info, :process 71, :f :cas, :value [4 3], :error :net-timeout}
+{:index 352, :time 17080556237, :type :invoke, :process 77, :f :cas, :value [2 0]}
+{:index 353, :time 17149341916, :type :invoke, :process 0, :f :read, :value nil}
+{:index 354, :time 17167299504, :type :ok, :process 0, :f :read, :value "4"}
+{:index 355, :time 17285107996, :type :invoke, :process 0, :f :read, :value nil}
+{:index 356, :time 17304195180, :type :ok, :process 0, :f :read, :value "4"}
+{:index 357, :time 17448023629, :type :invoke, :process 0, :f :read, :value nil}
+{:index 358, :time 17466066488, :type :ok, :process 0, :f :read, :value "4"}
+{:index 359, :time 17639223760, :type :invoke, :process 0, :f :read, :value nil}
+{:index 360, :time 17658566873, :type :ok, :process 0, :f :read, :value "4"}
+{:index 361, :time 17745338484, :type :invoke, :process 0, :f :read, :value nil}
+{:index 362, :time 17759668080, :type :ok, :process 0, :f :read, :value "4"}
+{:index 363, :time 17763396048, :type :invoke, :process 1, :f :read, :value nil}
+{:index 364, :time 17766983933, :type :invoke, :process 2, :f :read, :value nil}
+{:index 365, :time 17775753732, :type :fail, :process 2, :f :read, :value nil, :error [:abort "Timeout"]}
+{:index 366, :time 17788116719, :type :invoke, :process 0, :f :read, :value nil}
+{:index 367, :time 17789088413, :type :ok, :process 1, :f :read, :value "4"}
+{:index 368, :time 17805369879, :type :ok, :process 0, :f :read, :value "4"}
+{:index 369, :time 17866692639, :type :invoke, :process 0, :f :read, :value nil}
+{:index 370, :time 17881292802, :type :ok, :process 0, :f :read, :value "4"}
+{:index 371, :time 17911860035, :type :info, :process 81, :f :cas, :value [2 2], :error :net-timeout}
+{:index 372, :time 17949376378, :type :info, :process 76, :f :cas, :value [1 2], :error :net-timeout}
+{:index 373, :time 18029077709, :type :invoke, :process 0, :f :read, :value nil}
+{:index 374, :time 18050135273, :type :ok, :process 0, :f :read, :value "4"}
+{:index 375, :time 18083143685, :type :info, :process 77, :f :cas, :value [2 0], :error :net-timeout}
+{:index 376, :time 18184375508, :type :invoke, :process 0, :f :read, :value nil}
+{:index 377, :time 18203053933, :type :ok, :process 0, :f :read, :value "4"}
+{:index 378, :time 18211232548, :type :invoke, :process 87, :f :cas, :value [1 2]}
+{:index 379, :time 18259722882, :type :invoke, :process 1, :f :read, :value nil}
+{:index 380, :time 18274612221, :type :ok, :process 1, :f :read, :value "4"}
+{:index 381, :time 18354996280, :type :invoke, :process 2, :f :read, :value nil}
+{:index 382, :time 18362249436, :type :fail, :process 2, :f :read, :value nil, :error [:abort "Timeout"]}
+{:index 383, :time 18421810788, :type :invoke, :process 0, :f :read, :value nil}
+{:index 384, :time 18437710853, :type :ok, :process 0, :f :read, :value "4"}
+{:index 385, :time 18573761399, :type :invoke, :process 0, :f :read, :value nil}
+{:index 386, :time 18591252891, :type :ok, :process 0, :f :read, :value "4"}
+{:index 387, :time 18670609659, :type :invoke, :process 83, :f :cas, :value [3 4]}
+{:index 388, :time 18745885884, :type :invoke, :process 0, :f :read, :value nil}
+{:index 389, :time 18762791450, :type :ok, :process 0, :f :read, :value "4"}
+{:index 390, :time 18822064536, :type :invoke, :process 0, :f :read, :value nil}
+{:index 391, :time 18834869259, :type :ok, :process 0, :f :read, :value "4"}
+{:index 392, :time 18842219040, :type :invoke, :process 1, :f :read, :value nil}
+{:index 393, :time 18858126862, :type :ok, :process 1, :f :read, :value "4"}
+{:index 394, :time 19030787975, :type :invoke, :process 2, :f :read, :value nil}
+{:index 395, :time 19035596739, :type :fail, :process 2, :f :read, :value nil, :error [:abort "Timeout"]}
+{:index 396, :time 19039515807, :type :invoke, :process 82, :f :cas, :value [0 2]}
+{:index 397, :time 19127184031, :type :invoke, :process 0, :f :read, :value nil}
+{:index 398, :time 19144176691, :type :ok, :process 0, :f :read, :value "4"}
+{:index 399, :time 19212276845, :type :info, :process 87, :f :cas, :value [1 2], :error :net-timeout}
+{:index 400, :time 19296996150, :type :invoke, :process 0, :f :read, :value nil}
+{:index 401, :time 19315346212, :type :ok, :process 0, :f :read, :value "4"}
+{:index 402, :time 19429778707, :type :invoke, :process 93, :f :cas, :value [0 2]}
+{:index 403, :time 19476327203, :type :invoke, :process 0, :f :read, :value nil}
+{:index 404, :time 19493402055, :type :ok, :process 0, :f :read, :value "4"}
+{:index 405, :time 19566560525, :type :invoke, :process 1, :f :read, :value nil}
+{:index 406, :time 19585525123, :type :ok, :process 1, :f :read, :value "4"}
+{:index 407, :time 19673159313, :type :info, :process 83, :f :cas, :value [3 4], :error :net-timeout}
+{:index 408, :time 19693251270, :type :invoke, :process 89, :f :write, :value 2}
+{:index 409, :time 19699188010, :type :fail, :process 89, :f :write, :value 2, :error [:abort "Timeout"]}
+{:index 410, :time 19754674303, :type :invoke, :process 89, :f :cas, :value [3 1]}
+{:index 411, :time 19787140088, :type :invoke, :process 0, :f :read, :value nil}
+{:index 412, :time 19804261074, :type :ok, :process 0, :f :read, :value "4"}
+{:index 413, :time 19955299214, :type :invoke, :process 0, :f :read, :value nil}
+{:index 414, :time 19973526209, :type :ok, :process 0, :f :read, :value "4"}
+{:index 415, :time 20041297631, :type :info, :process 82, :f :cas, :value [0 2], :error :net-timeout}
+{:index 416, :time 20102804141, :type :invoke, :process 88, :f :cas, :value [1 2]}
+{:index 417, :time 20234158193, :type :invoke, :process 0, :f :read, :value nil}
+{:index 418, :time 20234800058, :type :invoke, :process 1, :f :read, :value nil}
+{:index 419, :time 20244629620, :type :invoke, :process 2, :f :read, :value nil}
+{:index 420, :time 20249683966, :type :ok, :process 0, :f :read, :value "4"}
+{:index 421, :time 20250370032, :type :ok, :process 1, :f :read, :value "4"}
+{:index 422, :time 20256629177, :type :fail, :process 2, :f :read, :value nil, :error [:abort "Timeout"]}
+{:index 423, :time 20296257282, :type :invoke, :process 0, :f :read, :value nil}
+{:index 424, :time 20310928561, :type :ok, :process 0, :f :read, :value "4"}
+{:index 425, :time 20389523592, :type :invoke, :process 0, :f :read, :value nil}
+{:index 426, :time 20407931784, :type :ok, :process 0, :f :read, :value "4"}
+{:index 427, :time 20431400511, :type :info, :process 93, :f :cas, :value [0 2], :error :net-timeout}
+{:index 428, :time 20477877064, :type :invoke, :process 99, :f :cas, :value [4 0]}
+{:index 429, :time 20628439845, :type :invoke, :process 0, :f :read, :value nil}
+{:index 430, :time 20646887447, :type :ok, :process 0, :f :read, :value "4"}
+{:index 431, :time 20724192909, :type :invoke, :process 0, :f :read, :value nil}
+{:index 432, :time 20742129773, :type :ok, :process 0, :f :read, :value "4"}
+{:index 433, :time 20747646185, :type :invoke, :process 1, :f :read, :value nil}
+{:index 434, :time 20762426364, :type :info, :process 89, :f :cas, :value [3 1], :error :net-timeout}
+{:index 435, :time 20765153582, :type :ok, :process 1, :f :read, :value "4"}
+{:index 441, :time 21104951278, :type :info, :process 88, :f :cas, :value [1 2], :error :net-timeout}
+{:index 451, :time 21480537657, :type :info, :process 99, :f :cas, :value [4 0], :error :net-timeout}
