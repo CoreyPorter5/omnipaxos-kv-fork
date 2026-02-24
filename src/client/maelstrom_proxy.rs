@@ -37,6 +37,7 @@ impl Node for ProxyHandler {
 
         match type_str {
             "init" => {
+                
                 let node_id = body["node_id"].as_str().unwrap_or("n0");
                 
                 self.set_port_from_id(node_id);

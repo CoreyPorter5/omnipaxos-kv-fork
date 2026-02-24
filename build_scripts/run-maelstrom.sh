@@ -1,1 +1,1 @@
-./maelstrom/maelstrom test -w lin-kv --bin ./target/debug/maelstrom --node-count 3 --concurrency 6 --time-limit 30 --rate 10 --log-stderr
+./maelstrom/maelstrom test -w lin-kv --bin ./target/debug/maelstrom --node-count 3 --concurrency 6 --time-limit 30 --rate 10 --log-stderr 
