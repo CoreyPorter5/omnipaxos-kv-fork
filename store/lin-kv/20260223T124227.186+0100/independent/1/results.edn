@@ -1,0 +1,48 @@
+{:linearizable
+ {:valid? false,
+  :configs
+  ({:model {:value nil},
+    :last-op nil,
+    :pending
+    [{:process 0,
+      :type :invoke,
+      :f :read,
+      :value "1",
+      :index 143,
+      :time 7501541721}
+     {:process 39,
+      :type :invoke,
+      :f :cas,
+      :value [2 4],
+      :index 142,
+      :time 7437719412}]}),
+  :final-paths
+  ([{:op nil, :model {:value nil}}
+    {:op
+     {:process 0,
+      :type :ok,
+      :f :read,
+      :value "1",
+      :index 144,
+      :time 7519917225},
+     :model {:msg "can't read 1 from register "}}]
+   [{:op nil, :model {:value nil}}
+    {:op
+     {:process 39,
+      :type :invoke,
+      :f :cas,
+      :value [2 4],
+      :index 142,
+      :time 7437719412},
+     :model {:msg "can't CAS  from 2 to 4"}}]),
+  :previous-ok nil,
+  :last-op nil,
+  :op
+  {:process 0,
+   :type :ok,
+   :f :read,
+   :value "1",
+   :index 144,
+   :time 7519917225}},
+ :timeline {:valid? true},
+ :valid? false}

@@ -1,0 +1,175 @@
+2026-02-23 10:51:01,286{GMT}	INFO	[jepsen test runner] jepsen.core: Test version 526450d3ca36fd6fc218ff1c9f93ca5ac8e41236 (plus uncommitted changes)
+2026-02-23 10:51:01,287{GMT}	INFO	[jepsen test runner] jepsen.core: Command line:
+lein run test -w lin-kv --bin /home/a1bderrahmane/omnipaxos-kv-fork/target/debug/maelstrom
+2026-02-23 10:51:01,369{GMT}	INFO	[jepsen test runner] jepsen.core: Running test:
+{:args []
+ :remote
+ #jepsen.control.retry.Remote{:remote #jepsen.control.scp.Remote{:cmd-remote #jepsen.control.sshj.SSHJRemote{:concurrency-limit 6,
+                                                                                                             :conn-spec nil,
+                                                                                                             :client nil,
+                                                                                                             :semaphore nil},
+                                                                 :conn-spec nil},
+                              :conn nil}
+ :log-net-send false
+ :node-count nil
+ :availability nil
+ :max-txn-length 4
+ :concurrency 5
+ :db
+ #object[maelstrom.db$db$reify__16612
+         "0xf500481"
+         "maelstrom.db$db$reify__16612@f500481"]
+ :max-writes-per-key 16
+ :leave-db-running? false
+ :name "lin-kv"
+ :logging-json? false
+ :start-time
+ #object[org.joda.time.DateTime "0x30628ef9" "2026-02-23T10:51:01.251+01:00"]
+ :nemesis-interval 10
+ :net
+ #object[maelstrom.net$jepsen_net$reify__15721
+         "0x6757ed9e"
+         "maelstrom.net$jepsen_net$reify__15721@6757ed9e"]
+ :client
+ #object[maelstrom.workload.lin_kv$client$reify__20973
+         "0x77d5395a"
+         "maelstrom.workload.lin_kv$client$reify__20973@77d5395a"]
+ :barrier
+ #object[java.util.concurrent.CyclicBarrier
+         "0x7b0eb7e"
+         "java.util.concurrent.CyclicBarrier@7b0eb7e"]
+ :log-stderr false
+ :pure-generators true
+ :ssh {:dummy? true}
+ :rate 5
+ :checker
+ #object[jepsen.checker$compose$reify__11089
+         "0x2381a837"
+         "jepsen.checker$compose$reify__11089@2381a837"]
+ :argv
+ ("test"
+  "-w"
+  "lin-kv"
+  "--bin"
+  "/home/a1bderrahmane/omnipaxos-kv-fork/target/debug/maelstrom")
+ :nemesis
+ (jepsen.nemesis.ReflCompose
+  {:fm {:start-partition 0,
+        :stop-partition 0,
+        :kill 1,
+        :start 1,
+        :pause 1,
+        :resume 1},
+   :nemeses [#unprintable "jepsen.nemesis.combined$partition_nemesis$reify__16905@7be29ac4"
+             #unprintable "jepsen.nemesis.combined$db_nemesis$reify__16886@2523730b"]})
+ :nodes ["n1" "n2" "n3" "n4" "n5"]
+ :test-count 1
+ :latency {:mean 0, :dist :constant}
+ :bin "/home/a1bderrahmane/omnipaxos-kv-fork/target/debug/maelstrom"
+ :generator
+ #object[jepsen.util.Forgettable
+         "0x10982760"
+         (jepsen.generator.TimeLimit
+          {:limit 60000000000,
+           :cutoff nil,
+           :gen (jepsen.generator.Any
+                 {:gens [(jepsen.generator.OnThreads
+                          {:f #{:nemesis},
+                           :context-filter #object[jepsen.generator.context$make_thread_filter$lazy_filter__12077
+                                                   "0x1b2c513e"
+                                                   "jepsen.generator.context$make_thread_filter$lazy_filter__12077@1b2c513e"],
+                           :gen nil})
+                         (jepsen.generator.OnThreads
+                          {:f #jepsen.generator.context.AllBut{:element :nemesis},
+                           :context-filter #object[jepsen.generator.context$make_thread_filter$lazy_filter__12077
+                                                   "0x4098ef14"
+                                                   "jepsen.generator.context$make_thread_filter$lazy_filter__12077@4098ef14"],
+                           :gen (jepsen.generator.Stagger
+                                 {:dt 400000000,
+                                  :next-time nil,
+                                  :gen (jepsen.generator.OnThreads
+                                        {:f #jepsen.generator.context.AllBut{:element :nemesis},
+                                         :context-filter #object[jepsen.generator.context$make_thread_filter$lazy_filter__12077
+                                                                 "0x1b74a062"
+                                                                 "jepsen.generator.context$make_thread_filter$lazy_filter__12077@1b74a062"],
+                                         :gen (jepsen.independent.ConcurrentGenerator
+                                               {:n 10,
+                                                :fgen #object[jepsen.tests.linearizable_register$test$fn__17385
+                                                              "0x6f5690f3"
+                                                              "jepsen.tests.linearizable_register$test$fn__17385@6f5690f3"],
+                                                :group->threads nil,
+                                                :thread->group nil,
+                                                :group->context-filter nil,
+                                                :keys (0 1 2 3 4 5 6 7 ...),
+                                                :gens nil})})})})]})})]
+ :log-net-recv false
+ :os
+ #object[maelstrom.net$jepsen_os$reify__15724
+         "0x11ed241c"
+         "maelstrom.net$jepsen_os$reify__15724@11ed241c"]
+ :time-limit 60
+ :workload :lin-kv
+ :consistency-models [:strict-serializable]
+ :topology :grid}
+
+2026-02-23 10:51:02,849{GMT}	INFO	[jepsen node n1] maelstrom.net: Starting Maelstrom network
+2026-02-23 10:51:02,851{GMT}	INFO	[jepsen test runner] jepsen.db: Tearing down DB
+2026-02-23 10:51:02,859{GMT}	INFO	[jepsen test runner] jepsen.db: Setting up DB
+2026-02-23 10:51:02,861{GMT}	INFO	[jepsen node n2] maelstrom.db: Setting up n2
+2026-02-23 10:51:02,861{GMT}	INFO	[jepsen node n3] maelstrom.db: Setting up n3
+2026-02-23 10:51:02,861{GMT}	INFO	[jepsen node n4] maelstrom.db: Setting up n4
+2026-02-23 10:51:02,861{GMT}	INFO	[jepsen node n5] maelstrom.db: Setting up n5
+2026-02-23 10:51:02,862{GMT}	INFO	[jepsen node n5] maelstrom.process: launching /home/a1bderrahmane/omnipaxos-kv-fork/target/debug/maelstrom []
+2026-02-23 10:51:02,862{GMT}	INFO	[jepsen node n2] maelstrom.process: launching /home/a1bderrahmane/omnipaxos-kv-fork/target/debug/maelstrom []
+2026-02-23 10:51:02,862{GMT}	INFO	[jepsen node n3] maelstrom.process: launching /home/a1bderrahmane/omnipaxos-kv-fork/target/debug/maelstrom []
+2026-02-23 10:51:02,862{GMT}	INFO	[jepsen node n4] maelstrom.process: launching /home/a1bderrahmane/omnipaxos-kv-fork/target/debug/maelstrom []
+2026-02-23 10:51:02,864{GMT}	INFO	[jepsen node n1] maelstrom.service: Starting services: (lin-kv lin-tso lww-kv seq-kv)
+2026-02-23 10:51:02,868{GMT}	INFO	[jepsen node n1] maelstrom.db: Setting up n1
+2026-02-23 10:51:02,869{GMT}	INFO	[jepsen node n1] maelstrom.process: launching /home/a1bderrahmane/omnipaxos-kv-fork/target/debug/maelstrom []
+2026-02-23 10:51:12,899{GMT}	INFO	[jepsen node n1] maelstrom.db: Tearing down n1
+2026-02-23 10:51:12,899{GMT}	INFO	[jepsen node n2] maelstrom.db: Tearing down n2
+2026-02-23 10:51:12,899{GMT}	INFO	[jepsen node n3] maelstrom.db: Tearing down n3
+2026-02-23 10:51:12,900{GMT}	INFO	[jepsen node n4] maelstrom.db: Tearing down n4
+2026-02-23 10:51:12,900{GMT}	INFO	[jepsen node n5] maelstrom.db: Tearing down n5
+2026-02-23 10:51:14,899{GMT}	INFO	[jepsen node n1] maelstrom.net: Shutting down Maelstrom network
+2026-02-23 10:51:14,903{GMT}	WARN	[jepsen test runner] jepsen.core: Test crashed!
+clojure.lang.ExceptionInfo: Expected node n3 to respond to an init message, but node did not respond.
+	at slingshot.support$stack_trace.invoke(support.clj:201)
+	at maelstrom.db$db$reify__16612.setup_BANG_(db.clj:63)
+	at jepsen.db$fn__11614$G__11608__11618.invoke(db.clj:12)
+	at jepsen.db$fn__11614$G__11607__11623.invoke(db.clj:12)
+	at clojure.core$partial$fn__5927.invoke(core.clj:2642)
+	at jepsen.control$on_nodes$fn__9552.invoke(control.clj:319)
+	at clojure.lang.AFn.applyToHelper(AFn.java:154)
+	at clojure.lang.AFn.applyTo(AFn.java:144)
+	at clojure.core$apply.invokeStatic(core.clj:667)
+	at clojure.core$with_bindings_STAR_.invokeStatic(core.clj:1990)
+	at clojure.core$with_bindings_STAR_.doInvoke(core.clj:1990)
+	at clojure.lang.RestFn.applyTo(RestFn.java:145)
+	at clojure.core$apply.invokeStatic(core.clj:671)
+	at clojure.core$bound_fn_STAR_$fn__5837.doInvoke(core.clj:2020)
+	at clojure.lang.RestFn.invoke(RestFn.java:411)
+	at dom_top.core$real_pmap_helper$build_thread__730$fn__731.invoke(core.clj:163)
+	at clojure.lang.AFn.applyToHelper(AFn.java:152)
+	at clojure.lang.AFn.applyTo(AFn.java:144)
+	at clojure.core$apply.invokeStatic(core.clj:667)
+	at clojure.core$with_bindings_STAR_.invokeStatic(core.clj:1990)
+	at clojure.core$with_bindings_STAR_.doInvoke(core.clj:1990)
+	at clojure.lang.RestFn.invoke(RestFn.java:428)
+	at clojure.lang.AFn.applyToHelper(AFn.java:156)
+	at clojure.lang.RestFn.applyTo(RestFn.java:135)
+	at clojure.core$apply.invokeStatic(core.clj:671)
+	at clojure.core$bound_fn_STAR_$fn__5837.doInvoke(core.clj:2020)
+	at clojure.lang.RestFn.invoke(RestFn.java:400)
+	at clojure.lang.AFn.run(AFn.java:22)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: clojure.lang.ExceptionInfo: Client read timeout
+	at slingshot.support$stack_trace.invoke(support.clj:201)
+	at maelstrom.client$recv_BANG_.invokeStatic(client.clj:98)
+	at maelstrom.client$recv_BANG_.invoke(client.clj:81)
+	at maelstrom.client$send_PLUS_recv_BANG_.invokeStatic(client.clj:123)
+	at maelstrom.client$send_PLUS_recv_BANG_.invoke(client.clj:119)
+	at maelstrom.client$rpc_BANG_.invokeStatic(client.clj:149)
+	at maelstrom.client$rpc_BANG_.invoke(client.clj:140)
+	at maelstrom.db$db$reify__16612.setup_BANG_(db.clj:48)
+	... 27 common frames omitted

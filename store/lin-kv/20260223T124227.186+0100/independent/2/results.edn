@@ -1,0 +1,33 @@
+{:linearizable
+ {:valid? false,
+  :configs
+  ({:model {:value nil},
+    :last-op nil,
+    :pending
+    [{:process 0,
+      :type :invoke,
+      :f :read,
+      :value "3",
+      :index 275,
+      :time 14224415633}]}),
+  :final-paths
+  ([{:op nil, :model {:value nil}}
+    {:op
+     {:process 0,
+      :type :ok,
+      :f :read,
+      :value "3",
+      :index 276,
+      :time 14239793509},
+     :model {:msg "can't read 3 from register "}}]),
+  :previous-ok nil,
+  :last-op nil,
+  :op
+  {:process 0,
+   :type :ok,
+   :f :read,
+   :value "3",
+   :index 276,
+   :time 14239793509}},
+ :timeline {:valid? true},
+ :valid? false}

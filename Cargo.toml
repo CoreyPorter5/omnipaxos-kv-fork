@@ -19,6 +19,8 @@ rand = "0.8.5"
 csv = "1.3.1"
 config = "0.15.8"
 axum = "0.7"
+maelstrom-node="0.1.6"
+async-trait = "0.1.68"
 reqwest = { version = "0.11", features = ["json"] }
 
 [[bin]]
@@ -28,3 +30,7 @@ path = "src/client/main.rs"
 [[bin]]
 name = "server"
 path = "src/server/main.rs"
+
+[[bin]]
+name = "maelstrom"
+path ="src/client/maelstrom_proxy.rs"
