@@ -19,7 +19,7 @@ pub struct AppState {
     pub tx: mpsc::Sender<HttpTrigger>,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct KvResp {
     pub ok: bool,
     pub value: Option<String>,
@@ -27,7 +27,7 @@ pub struct KvResp {
     pub error: Option<String>,
 }
 
-#[derive(Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct PutBody {
     pub value: String,
 }
