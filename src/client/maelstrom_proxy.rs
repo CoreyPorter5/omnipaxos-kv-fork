@@ -45,18 +45,70 @@ impl Node for ProxyHandler {
                 runtime.reply(req, serde_json::json!({"type": "init_ok"})).await
             }
             "read" => {
-                let port = self.get_port(); 
+                let port = self.get_port();
                 let key = body["key"].as_str().unwrap_or("0");
                 let url = format!("http://127.0.0.1:{}/get/{}", port, key);
-                
-                match self.http_client.get(&url).timeout(Duration::from_secs(5)).send().await {
+
+                match self.http_client
+                    .get(&url)
+                    .timeout(Duration::from_secs(5))
+                    .send()
+                    .await
+                {
                     Ok(resp) => {
                         match resp.json::<KvResp>().await {
-                            Ok(kv) => runtime.reply(req, serde_json::json!({"type": "read_ok", "value": kv.value})).await,
-                            Err(_) => runtime.reply(req, serde_json::json!({"type": "error", "code": 13, "text": "Bad JSON from Shim"})).await
+                            Ok(kv) => {
+                                match kv.value {
+                                    Some(value_str) => {
+                                        match value_str.parse::<i64>() {
+                                            Ok(parsed) => {
+                                                runtime.reply(
+                                                    req,
+                                                    serde_json::json!({
+                                            "type": "read_ok",
+                                            "value": parsed
+                                        })
+                                                ).await
+                                            }
+                                            Err(_) => runtime.reply(
+                                                req,
+                                                serde_json::json!({
+                                        "type": "error",
+                                        "code": 13,
+                                        "text": "Invalid integer from Shim"
+                                    })
+                                            ).await
+                                        }
+                                    }
+                                    None => {
+                                        runtime.reply(
+                                            req,
+                                            serde_json::json!({
+                                    "type": "read_ok",
+                                    "value": null
+                                })
+                                        ).await
+                                    }
+                                }
+                            }
+                            Err(_) => runtime.reply(
+                                req,
+                                serde_json::json!({
+                        "type": "error",
+                        "code": 13,
+                        "text": "Bad JSON from Shim"
+                    })
+                            ).await
                         }
                     }
-                    Err(_) => runtime.reply(req, serde_json::json!({"type": "error", "code": 14, "text": "Timeout"})).await
+                    Err(_) => runtime.reply(
+                        req,
+                        serde_json::json!({
+                "type": "error",
+                "code": 14,
+                "text": "Timeout"
+            })
+                    ).await
                 }
             }
             "write" => {
@@ -71,6 +123,66 @@ impl Node for ProxyHandler {
                     Err(_) => runtime.reply(req, serde_json::json!({"type": "error", "code": 14, "text": "Timeout"})).await
                 }
             }
+            "cas" => {
+                let port = self.get_port();
+                let key = body["key"].as_str().unwrap_or("0");
+                let from = body["from"]
+                    .as_i64()
+                    .map(|v| v.to_string())
+                    .unwrap_or_default();
+                let to = body["to"]
+                    .as_i64()
+                    .map(|v| v.to_string())
+                    .unwrap_or_default();
+                let create = body["create_if_not_exists"]
+                    .as_bool()
+                    .unwrap_or(false);
+
+                let url = format!("http://127.0.0.1:{}/cas/{}", port, key);
+
+                let body = serde_json::json!({
+                    "from": from,
+                    "to": to,
+                    "create_if_not_exists": create
+                });
+
+                match self.http_client
+                    .post(&url)
+                    .json(&body)
+                    .timeout(Duration::from_secs(5))
+                    .send()
+                    .await
+                {
+                    Ok(resp) => {
+                        match resp.json::<KvResp>().await {
+                            Ok(kv) => {
+                                if kv.swapped == Some(true) {
+                                    runtime.reply(req, serde_json::json!({
+                            "type": "cas_ok"
+                        })).await
+                                } else {
+                                    runtime.reply(req, serde_json::json!({
+                            "type": "error",
+                            "code": 22,
+                            "text": "precondition failed"
+                        })).await
+                                }
+                            }
+                            Err(_) => runtime.reply(req, serde_json::json!({
+                                "type": "error",
+                                "code": 13,
+                                "text": "Bad JSON from Shim"
+                            })).await
+                                    }
+                                }
+                                Err(_) => runtime.reply(req, serde_json::json!({
+                                    "type": "error",
+                                    "code": 14,
+                                    "text": "Timeout"
+                                })).await
+                            }
+                        }
+
             _ => Ok(()) 
         }
     }

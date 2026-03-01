@@ -231,10 +231,18 @@ impl Client {
                                 });
                             }
                         }
-
-                        // If you add CAS, you'll likely want a response type for it.
-                        // If you encode CAS as Write + extra info, adjust here.
+                        
                         ServerMessage::StartSignal(_) => {}
+                        ServerMessage::Cas(id, swapped) => {
+                            if let Some(tx) = pending.remove(&id) {
+                                let _ = tx.send(KvResp {
+                                    ok: swapped,
+                                    value: None,
+                                    swapped: Some(swapped),
+                                    error: if swapped { None } else { Some("precondition failed".into()) },
+                                });
+                            }
+                        }
                     }
                 }
             }

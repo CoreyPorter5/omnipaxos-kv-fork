@@ -30,6 +30,7 @@ pub mod messages {
     pub enum ServerMessage {
         Write(CommandId),
         Read(CommandId, Option<String>),
+        Cas(CommandId, bool),
         StartSignal(Timestamp),
     }
 
@@ -39,6 +40,7 @@ pub mod messages {
                 ServerMessage::Write(id) => *id,
                 ServerMessage::Read(id, _) => *id,
                 ServerMessage::StartSignal(_) => unimplemented!(),
+                ServerMessage::Cas(id, _) => *id,
             }
         }
         pub fn get_read_value(&self) -> Option<&String> {
