@@ -131,15 +131,27 @@ impl OmniPaxosServer {
             self.update_database_and_respond(decided_commands);
         }
     }
-    
+
     fn update_database_and_respond(&mut self, commands: Vec<Command>) {
-        // TODO: batching responses possible here (batch at handle_cluster_messages)
         for command in commands {
-            let read = self.database.handle_command(command.kv_cmd);
+            let is_cas = matches!(command.kv_cmd, KVCommand::Cas { .. });
+            let result = self.database.handle_command(command.kv_cmd.clone());
             if command.coordinator_id == self.id {
-                let response = match read {
-                    Some(read_result) => ServerMessage::Read(command.id, read_result),
-                    None => ServerMessage::Write(command.id),
+                let response = if is_cas {
+                    let swapped = result
+                        .and_then(|inner| inner)
+                        .map(|s| s == "true")
+                        .unwrap_or(false);
+                    ServerMessage::Cas(command.id, swapped)
+                } else {
+                    match result {
+                        Some(read_result) => {
+                            ServerMessage::Read(command.id, read_result)
+                        }
+                        None => {
+                            ServerMessage::Write(command.id)
+                        }
+                    }
                 };
                 self.network.send_to_client(command.client_id, response);
             }
