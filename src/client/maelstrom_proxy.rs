@@ -13,6 +13,17 @@ struct ProxyHandler {
 }
 
 impl ProxyHandler {
+
+    fn parse_key(v: &Value) -> String {
+        if let Some(s) = v.as_str(){
+            s.to_string()
+        }else if let Some(n) = v.as_i64() {
+            n.to_string()
+        } else {
+            panic!("Unexpected key format: {:?}", v)
+        }
+    }
+
     fn get_port(&self) -> u16 {
         self.client_port.lock().unwrap().expect("Port not initialized yet!")
     }
@@ -46,7 +57,7 @@ impl Node for ProxyHandler {
             }
             "read" => {
                 let port = self.get_port();
-                let key = body["key"].as_str().unwrap_or("0");
+                let key = Self::parse_key(&body["key"]);
                 let url = format!("http://127.0.0.1:{}/get/{}", port, key);
 
                 match self.http_client
@@ -113,8 +124,8 @@ impl Node for ProxyHandler {
             }
             "write" => {
                 let port = self.get_port();
-                let key = body["key"].as_str().unwrap_or("0");
-                let val_str = body["value"].to_string().replace('"', ""); 
+                let key = Self::parse_key(&body["key"]);
+                let val_str = body["value"].as_i64().map(|v| v.to_string()).unwrap_or_else(||panic!("Expected integer value for write command, got: {:?}", body["value"]));
 
                 let url = format!("http://127.0.0.1:{}/put/{}", port, key);
                 
@@ -125,7 +136,7 @@ impl Node for ProxyHandler {
             }
             "cas" => {
                 let port = self.get_port();
-                let key = body["key"].as_str().unwrap_or("0");
+                let key = Self::parse_key(&body["key"]);
                 let from = body["from"]
                     .as_i64()
                     .map(|v| v.to_string())

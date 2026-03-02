@@ -8,7 +8,6 @@ pub struct Database {
 impl Database {
     pub fn new() -> Self {
         let mut db = HashMap::new();
-        db.insert("1".to_string(), "2".to_string());
         Self { db }
     }
 
