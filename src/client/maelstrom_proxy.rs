@@ -1,6 +1,7 @@
 use async_trait::async_trait;
 use maelstrom::{Node, Runtime,protocol:: Message, Result};
 use serde_json::Value;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
@@ -10,6 +11,7 @@ use http_client::{KvResp, PutBody};
 struct ProxyHandler {
     client_port: Mutex<Option<u16>>,
     http_client: reqwest::Client,
+    crashed: AtomicBool,
 }
 
 impl ProxyHandler {
@@ -45,6 +47,9 @@ impl Node for ProxyHandler {
         let body: Value = req.body.clone().as_obj()?;
         
         let type_str = body["type"].as_str().unwrap_or("");
+        if self.crashed.load(Ordering::Relaxed) {
+            return Ok(());
+        }
 
         match type_str {
             "init" => {
@@ -199,13 +204,42 @@ impl Node for ProxyHandler {
     }
 }
 
+use std::time::{SystemTime, UNIX_EPOCH};
+
+fn pseudo_rand_u64() -> u64 {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap()
+        .as_nanos() as u64
+}
+
 #[tokio::main]
 async fn main() -> Result<()> {
-
-    let handler = Arc::new(ProxyHandler { 
-        client_port: Mutex::new(None), 
+    let handler = Arc::new(ProxyHandler {
+        client_port: Mutex::new(None),
         http_client: reqwest::Client::new(),
+        crashed: AtomicBool::new(false),
     });
-    
+
+    // Crash nemesis: randomly "crash" a node for a short duration.
+    // Tune these numbers as you like.
+    let h = handler.clone();
+    tokio::spawn(async move {
+        loop {
+            // Wait 2..7 seconds between crashes
+            let wait_ms = 2000 + (pseudo_rand_u64() % 5000) as u64;
+            tokio::time::sleep(Duration::from_millis(wait_ms)).await;
+
+            // Crash for 1..4 seconds
+            let down_ms = 1000 + (pseudo_rand_u64() % 3000) as u64;
+
+            eprintln!("(stderr) CRASH nemesis: entering crash-stop for {}ms", down_ms);
+            h.crashed.store(true, Ordering::Relaxed);
+            tokio::time::sleep(Duration::from_millis(down_ms)).await;
+            h.crashed.store(false, Ordering::Relaxed);
+            eprintln!("(stderr) CRASH nemesis: recovered");
+        }
+    });
+
     Runtime::new().with_handler(handler).run().await
 }
