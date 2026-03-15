@@ -74,7 +74,7 @@ async fn dispatch(state: AppState, cmd: KVCommand) -> (StatusCode, Json<KvResp>)
     }
 }
 
-// --- Separate endpoints, but minimal code in each ---
+
 
 async fn get_endpoint(
     State(state): State<AppState>,

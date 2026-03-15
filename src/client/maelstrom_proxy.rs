@@ -222,7 +222,6 @@ async fn main() -> Result<()> {
     });
 
     // Crash nemesis: randomly "crash" a node for a short duration.
-    // Tune these numbers as you like.
     let h = handler.clone();
     tokio::spawn(async move {
         loop {
